@@ -1,3 +1,5 @@
+import { useRef } from "react"; // Importando o hook useRef do React
+import api from "../../services/api"; // Importando a instância do axios configurada
 import {
   Title,
   Container,
@@ -12,6 +14,40 @@ import {
 import UserImage from "../../assets/users.png"; // Importando a imagem do usuário
 
 function Home() {
+
+  const inputName = useRef()
+  const inputAge = useRef()
+  const inputEmail = useRef()
+
+  /* a maneira "tradicional" de fazer
+    function registerNewUser() {
+    console.log(inputName.current.value)
+    console.log(inputAge.current.value)
+    console.log(inputEmail.current.value)
+  */
+
+  async function registerNewUser() { // a maneira "moderna" de fazer
+    const data = await api.post('/usuarios', {
+      name: inputName.current.value,
+      age: inputAge.current.value,
+      email: inputEmail.current.value
+    })
+
+    console.log(data)
+/*
+
+    const response = await api.post('/users', {
+      name: inputName.current.value,
+      age: inputAge.current.value,
+      email: inputEmail.current.value
+    })
+
+    console.log(response.data)
+*/
+
+  }
+
+
   //componente React sempre com letras maiusculas
   return (
     <Container>
@@ -27,14 +63,14 @@ function Home() {
             <InputLabel>
               Nome<span> *</span>
             </InputLabel>
-            <Input type="text" placeholder="Nome" />
+            <Input type="text" placeholder="Nome" ref={inputName} />
           </div>
 
           <div>
             <InputLabel>
               Idade<span> *</span>
             </InputLabel>
-            <Input type="number" placeholder="Idade" />
+            <Input type="number" placeholder="Idade" ref={inputAge} />
           </div>
         </ContainerInputs>
 
@@ -42,10 +78,10 @@ function Home() {
           <InputLabel>
             E-mail<span> *</span>
           </InputLabel>
-          <Input type="email" placeholder="E-mail do usuário" />
+          <Input type="email" placeholder="E-mail do usuário" ref={inputEmail} />
         </div>
 
-        <Button>Cadastrar Usuário</Button>
+        <Button type='button' onClick={registerNewUser}>Cadastrar Usuário</Button>
       </Form>
     </Container>
   );
