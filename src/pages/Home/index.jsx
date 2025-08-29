@@ -19,12 +19,6 @@ function Home() {
   const inputAge = useRef()
   const inputEmail = useRef()
 
-  /* a maneira "tradicional" de fazer
-    function registerNewUser() {
-    console.log(inputName.current.value)
-    console.log(inputAge.current.value)
-    console.log(inputEmail.current.value)
-  */
 
   async function registerNewUser() { // a maneira "moderna" de fazer
     const data = await api.post('/usuarios', {
@@ -34,16 +28,6 @@ function Home() {
     })
 
     console.log(data)
-/*
-
-    const response = await api.post('/users', {
-      name: inputName.current.value,
-      age: inputAge.current.value,
-      email: inputEmail.current.value
-    })
-
-    console.log(response.data)
-*/
 
   }
 
