@@ -1,15 +1,31 @@
+import { useEffect } from "react";
+import api from "../../services/api";
+
 import Button from "../../components/Button";
 import TopBackground from "../../components/TopBackground";
-import { useNavigate } from "react-router-dom";
+
+
 
 function ListUsers() {
-  const navigate = useNavigate();
 
+  useEffect(() => {
+    async function getUsers() {
+      try {
+        const response = await api.get("/usuarios");
+        console.log(response.data); // aqui você pega os dados mesmo
+      } catch (error) {
+        console.error("Erro ao buscar usuários:", error);
+      }
+    }
+
+    getUsers();
+  }, []);
+  
   return (
     <div>
       <TopBackground />
       <h1>Listagem de Usuários</h1>
-      <Button onClick={() => navigate("/")}>Voltar</Button>
+      <Button>Voltar</Button>
     </div>
   );
 }
