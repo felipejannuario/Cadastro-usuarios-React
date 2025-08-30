@@ -1,43 +1,40 @@
 import { useRef } from "react"; // Importando o hook useRef do React
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api"; // Importando a instância do axios configurada
+
 import {
   Title,
   Container,
-  TopBackground,
   Form,
   ContainerInputs,
   InputLabel,
   Input,
-  Button,
 } from "./styles"; // Importando o componente Title do arquivo styles.js
 
-import UserImage from "../../assets/users.png"; // Importando a imagem do usuário
+import Button from "../../components/Button"; // Importando o componente Button
+import TopBackground from "../../components/TopBackground";
 
 function Home() {
+  const inputName = useRef();
+  const inputAge = useRef();
+  const inputEmail = useRef();
+  const navigate = useNavigate();
 
-  const inputName = useRef()
-  const inputAge = useRef()
-  const inputEmail = useRef()
-
-
-  async function registerNewUser() { // a maneira "moderna" de fazer
-    const data = await api.post('/usuarios', {
+  async function registerNewUser() {
+    // a maneira "moderna" de fazer
+    const data = await api.post("/usuarios", {
       name: inputName.current.value,
       age: parseInt(inputAge.current.value),
-      email: inputEmail.current.value
-    })
+      email: inputEmail.current.value,
+    });
 
-    console.log(data)
-
+    console.log(data);
   }
-
 
   //componente React sempre com letras maiusculas
   return (
     <Container>
-      <TopBackground>
-        <img src={UserImage} alt="Imagem do usuário" />
-      </TopBackground>
+      <TopBackground />
 
       <Form>
         <Title>Cadastrar Usuário</Title>
@@ -62,11 +59,21 @@ function Home() {
           <InputLabel>
             E-mail<span> *</span>
           </InputLabel>
-          <Input type="email" placeholder="E-mail do usuário" ref={inputEmail} />
+          <Input
+            type="email"
+            placeholder="E-mail do usuário"
+            ref={inputEmail}
+          />
         </div>
 
-        <Button type='button' onClick={registerNewUser}>Cadastrar Usuário</Button>
+        <Button type="button" onClick={registerNewUser} theme="primary">
+          Cadastrar Usuário
+        </Button>
       </Form>
+
+      <Button type="button" onClick={() => navigate("/lista-de-usuarios")}>
+        Ver lista de Usuários
+      </Button>
     </Container>
   );
 }
