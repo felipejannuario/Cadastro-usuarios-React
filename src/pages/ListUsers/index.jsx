@@ -4,7 +4,6 @@ import api from "../../services/api";
 
 import Button from "../../components/Button";
 import TopBackground from "../../components/TopBackground";
-
 import Trash from "../../assets/trash.svg";
 
 import {
@@ -14,56 +13,107 @@ import {
   Title,
   TrashIcon,
   AvatarUsers,
+  UserInfo,
+  ButtonsContainer,
 } from "./styles";
+
+import EditUserForm from "./EditUserForm"; // Formulário modular
 
 function ListUsers() {
   const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  // Buscar usuários
   useEffect(() => {
     async function getUsers() {
       try {
+        setLoading(true);
         const { data } = await api.get("/usuarios");
-
-        if (Array.isArray(data)) {
-          setUsers(data); // agora pega direto do backend
+        if (Array.isArray(data.users)) {
+          setUsers(data.users);
         } else {
           setUsers([]);
         }
       } catch (error) {
         console.error("Erro ao buscar usuários:", error);
+        setErrorMessage("Erro ao carregar usuários");
         setUsers([]);
+      } finally {
+        setLoading(false);
       }
     }
 
     getUsers();
   }, []);
 
+  // Deletar usuário
+  async function handleDelete(id) {
+    try {
+      await api.delete(`/usuarios/${id}`);
+      setUsers(users.filter((user) => user.id !== id));
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
+      setErrorMessage("Erro ao deletar usuário");
+    }
+  }
+
   return (
     <Container>
       <TopBackground />
       <Title>Listagem de Usuários</Title>
 
-      <ContainerUsers>
-        {users.map((user) => (
-          <CardUsers key={user.id}>
-            <AvatarUsers
-              src={`https://avatar.iran.liara.run/public?username=${user.id}`} // usa ID do banco
-              alt={`Avatar de ${user.name}`}
-            />
-            <div>
-              <h3>{user.name}</h3>
-              <p>{user.email}</p>
-              <p>{user.age} anos</p>
-            </div>
-            <TrashIcon
-              src={Trash}
-              alt="icone-lixo"
-              onClick={() => console.log(`Deletar usuário ${user.id}`)}
-            />
-          </CardUsers>
-        ))}
-      </ContainerUsers>
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+      {loading ? (
+        <p style={{ color: "#fff" }}>Carregando usuários...</p>
+      ) : (
+        <ContainerUsers>
+          {users.map((user) => (
+            <CardUsers key={user.id}>
+              <AvatarUsers
+                src={`https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`}
+                alt={`Avatar de ${user.name}`}
+              />
+
+              <UserInfo>
+                <h3>{user.name}</h3>
+                <p>{user.email}</p>
+                <p>{user.age} anos</p>
+
+                <ButtonsContainer>
+                  <Button onClick={() => setEditingUser(user)}>Editar</Button>
+                  <TrashIcon
+                    src={Trash}
+                    alt="icone-lixo"
+                    onClick={() => handleDelete(user.id)}
+                  />
+                </ButtonsContainer>
+              </UserInfo>
+            </CardUsers>
+          ))}
+        </ContainerUsers>
+      )}
+
+      {/* Formulário modular de edição */}
+      {editingUser && (
+        <EditUserForm
+          user={editingUser}
+          onCancel={() => setEditingUser(null)}
+          onSave={async (updatedUser) => {
+            try {
+              const { data } = await api.put(`/usuarios/${updatedUser.id}`, updatedUser);
+              setUsers(users.map((u) => (u.id === data.user.id ? data.user : u)));
+              setEditingUser(null);
+            } catch (error) {
+              console.error("Erro ao editar usuário:", error);
+              setErrorMessage("Erro ao atualizar usuário");
+            }
+          }}
+        />
+      )}
 
       <Button type="button" onClick={() => navigate("/")}>
         Voltar
