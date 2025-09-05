@@ -62,7 +62,7 @@ function ListUsers() {
   }
 
   //Proteger rota no front
-  useEffect(() => {
+useEffect(() => {
   const token = localStorage.getItem("token");
   if (!token) {
     navigate("/login");
@@ -71,13 +71,17 @@ function ListUsers() {
 
   async function getUsers() {
     try {
+      setLoading(true);
       const { data } = await api.get("/usuarios", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUsers(Array.isArray(data) ? data : []);
+      setUsers(Array.isArray(data.users) ? data.users : []);
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
+      setErrorMessage("Erro ao carregar usuários");
       setUsers([]);
+    } finally {
+      setLoading(false);
     }
   }
 

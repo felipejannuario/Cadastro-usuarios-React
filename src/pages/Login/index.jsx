@@ -1,51 +1,44 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
-import { Container, Form, Title, Input, InputLabel } from "./styles";
-import Button from "../../components/Button";
-import TopBackground from "../../components/TopBackground";
-
 function Login() {
-  const inputEmail = useRef();
-  const inputPassword = useRef();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  async function handleLogin() {
+  const login = async () => {
     try {
-      const { data } = await api.post("/admin/login", {
-        email: inputEmail.current.value,
-        password: inputPassword.current.value,
-      });
-
-      // guarda o token no localStorage
+      const { data } = await api.post("/admin/login", { email, password });
+      // Salva o token no localStorage
       localStorage.setItem("token", data.token);
-
-      // redireciona para a lista de usuários
+      // Redireciona para a lista de usuários
       navigate("/lista-de-usuarios");
-    } catch (error) {
-      alert("Login inválido. Verifique suas credenciais.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Erro no login");
+      console.error(err);
     }
-  }
+  };
 
   return (
-    <Container>
-      <TopBackground />
-      <Form>
-        <Title>Login</Title>
-        <div>
-          <InputLabel>Email</InputLabel>
-          <Input type="email" placeholder="Digite seu email" ref={inputEmail} />
-        </div>
-        <div>
-          <InputLabel>Senha</InputLabel>
-          <Input type="password" placeholder="Digite sua senha" ref={inputPassword} />
-        </div>
-        <Button type="button" onClick={handleLogin} theme="primary">
-          Entrar
-        </Button>
-      </Form>
-    </Container>
+    <div>
+      <h1>Login</h1>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Senha"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={login}>Entrar</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
   );
 }
 
