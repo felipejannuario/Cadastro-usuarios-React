@@ -2,15 +2,7 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
-import {
-  Title,
-  Container,
-  Form,
-  ContainerInputs,
-  InputLabel,
-  Input,
-} from "./styles";
-
+import { Container, Form, Title, Input, InputLabel } from "./styles";
 import Button from "../../components/Button";
 import TopBackground from "../../components/TopBackground";
 
@@ -21,45 +13,34 @@ function Login() {
 
   async function handleLogin() {
     try {
-      const response = await api.post("/admin/login", {
+      const { data } = await api.post("/admin/login", {
         email: inputEmail.current.value,
         password: inputPassword.current.value,
       });
 
-      // salva token no localStorage
-      localStorage.setItem("token", response.data.token);
+      // guarda o token no localStorage
+      localStorage.setItem("token", data.token);
 
-      alert("Login realizado com sucesso!");
-      navigate("/lista-de-usuarios"); // redireciona após login
+      // redireciona para a lista de usuários
+      navigate("/lista-de-usuarios");
     } catch (error) {
-      console.error("Erro no login:", error.response?.data || error);
-      alert(error.response?.data?.message || "Erro ao fazer login");
+      alert("Login inválido. Verifique suas credenciais.");
     }
   }
 
   return (
     <Container>
       <TopBackground />
-
       <Form>
-        <Title>Login Admin</Title>
-
-        <ContainerInputs>
-          <div>
-            <InputLabel>
-              E-mail<span> *</span>
-            </InputLabel>
-            <Input type="email" placeholder="E-mail" ref={inputEmail} />
-          </div>
-
-          <div>
-            <InputLabel>
-              Senha<span> *</span>
-            </InputLabel>
-            <Input type="password" placeholder="Senha" ref={inputPassword} />
-          </div>
-        </ContainerInputs>
-
+        <Title>Login</Title>
+        <div>
+          <InputLabel>Email</InputLabel>
+          <Input type="email" placeholder="Digite seu email" ref={inputEmail} />
+        </div>
+        <div>
+          <InputLabel>Senha</InputLabel>
+          <Input type="password" placeholder="Digite sua senha" ref={inputPassword} />
+        </div>
         <Button type="button" onClick={handleLogin} theme="primary">
           Entrar
         </Button>

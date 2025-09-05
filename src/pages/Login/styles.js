@@ -1,54 +1,42 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  background-color: #181f36;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  min-height: 100vh;
+  background-color: #0f172a;
 `;
 
 export const Form = styled.form`
-  background-color: #252d48;
-  padding: 30px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background: #1e293b;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
 `;
 
-export const Title = styled.h2`
-  color: #fff;
+export const Title = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
   text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 10px;
-`;
-
-export const ContainerInputs = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 `;
 
 export const InputLabel = styled.label`
-  color: #fff;
   font-size: 14px;
-
-  span {
-    color: #ff5c5c;
-  }
+  color: white;
+  margin-bottom: 4px;
 `;
 
 export const Input = styled.input`
   width: 100%;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: none;
   outline: none;
-  font-size: 14px;
 `;
