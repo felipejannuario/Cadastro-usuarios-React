@@ -61,6 +61,30 @@ function ListUsers() {
     }
   }
 
+  //Proteger rota no front
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+
+  async function getUsers() {
+    try {
+      const { data } = await api.get("/usuarios", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+      setUsers([]);
+    }
+  }
+
+  getUsers();
+}, [navigate]);
+
+
   return (
     <Container>
       <TopBackground />
