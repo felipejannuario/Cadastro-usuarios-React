@@ -51,6 +51,7 @@ function ListUsers() {
 
   // Deletar usuário
   async function handleDelete(id) {
+    if (!window.confirm("Tem certeza que deseja deletar este usuário?")) return;
     try {
       await api.delete(`/usuarios/${id}`);
       setUsers(users.filter((user) => user.id !== id));
@@ -74,8 +75,11 @@ function ListUsers() {
           {users.map((user) => (
             <CardUsers key={user.id}>
               <AvatarUsers
-                src={`https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`}
+                src={`https://avatar.iran.liara.run/public?username=${encodeURIComponent(
+                  user.name
+                )}`}
                 alt={`Avatar de ${user.name}`}
+                onError={(e) => (e.target.src = "/default-avatar.png")}
               />
 
               <UserInfo>
@@ -104,12 +108,19 @@ function ListUsers() {
           onCancel={() => setEditingUser(null)}
           onSave={async (updatedUser) => {
             try {
-              const { data } = await api.put(`/usuarios/${updatedUser.id}`, updatedUser);
-              setUsers(users.map((u) => (u.id === data.user.id ? data.user : u)));
+              const { data } = await api.put(
+                `/usuarios/${updatedUser.id}`,
+                updatedUser
+              );
+              setUsers(
+                users.map((u) => (u.id === data.user.id ? data.user : u))
+              );
               setEditingUser(null);
             } catch (error) {
-              console.error("Erro ao editar usuário:", error);
-              setErrorMessage("Erro ao atualizar usuário");
+              console.error(error);
+              setErrorMessage(
+                error.response?.data?.message || "Erro ao atualizar usuário"
+              );
             }
           }}
         />

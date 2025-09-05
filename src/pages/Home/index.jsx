@@ -21,16 +21,24 @@ function Home() {
   const navigate = useNavigate();
 
   async function registerNewUser() {
-    // a maneira "moderna" de fazer
-    const data = await api.post("/usuarios", {
-      name: (inputName.current.value = ""),
-      age: (inputAge.current.value = ""),
-      email: (inputEmail.current.value = ""),
-    });
+  const newUser = {
+    name: inputName.current.value,
+    age: inputAge.current.value,
+    email: inputEmail.current.value,
+  };
 
-    console.log(data);
+  try {
+    const response = await api.post("/usuarios", newUser);
+    console.log("Usuário cadastrado:", response.data);
+
+    // limpa os campos depois do envio
+    inputName.current.value = "";
+    inputAge.current.value = "";
+    inputEmail.current.value = "";
+  } catch (error) {
+    console.error("Erro ao cadastrar usuário:", error.response?.data || error);
   }
-
+}
   //componente React sempre com letras maiusculas
   return (
     <Container>
